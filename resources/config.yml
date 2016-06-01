@@ -1,0 +1,23 @@
+#delay is the minimum time in seconds allowed between chats, including warnings
+#message that will be sent if player is spamming
+#action that will be performed after warnings, "kick" or "ban"
+#kickmessage is displayed when kicked
+#warnings is the number offenses before action is taken
+delay: 2
+message1: "Please be polite, do not chat too fast"
+message2: "For help and chat join DISCORD at jdcraft.net/discord"
+action: "kick"
+kickmessage: "Server Closed"
+warnings: 5
+setkickmessage: "Spammers will be kicked"
+setbanmessage: "Spammers will be banned"
+setbanipmessage: "Spammers will be IP banned"
+setbancidmessage: "Spammers will be CID banned"
+banmessage: "No Spam"
+setdelay: "AntiSpamPro settings have been changed"
+invaliddelay: "Please use a valid delay (1, 2 or 3)"
+help1: "/asp kick    set the punishment to kick"
+help2: "/asp ban     set the punishment to ban"
+help3: "/asp set 2   set minimum delay (1,2 or 3)"
+help4: "/asp         display the current minimum delay"
+lastwarning: "CAREFUL... LAST WARNING"

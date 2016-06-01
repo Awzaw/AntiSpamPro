@@ -1,0 +1,13 @@
+main: awzaw\antispampro\AntiSpamPro
+api: 2.0.0
+load: STARTUP
+name: AntiSpamPro
+description: "antispampro"
+version: 1.0.1
+author: awzaw
+commands:
+ asp:
+  permission: asp
+  default: op
+  description: AntiSpamPro Commands
+  usage: /asp [help]
