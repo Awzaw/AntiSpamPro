@@ -86,7 +86,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
         if (!isset($args[0])) {
             if ($sender instanceof Player) {
-                $sender->getPlayer()->sendMessage(TEXTFORMAT::GREEN . $this->getConfig()->get("delay") . " seconds");
+                $sender->getPlayer()->sendMessage(TEXTFORMAT::GREEN . "Banmode: " . $this->getConfig()->get("action") . "  " . "Delay: " . $this->getConfig()->get("delay") . " seconds");
             } else {
                 $this->getLogger()->info("Banmode: " . $this->getConfig()->get("action") . "  " . "Delay: " . $this->getConfig()->get("delay") . " seconds");
             }
@@ -152,6 +152,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
                 return true;
 
             default:
+                
                 break;
         }
     }
