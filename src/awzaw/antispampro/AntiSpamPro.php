@@ -12,14 +12,20 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
 use pocketmine\utils\TextFormat;
 use pocketmine\Server;
+use awzaw\antispampro\ProfanityFilter;
 
 class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
     private $players = [];
+    public $profanityfilter;
 
     public function onEnable() {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->saveDefaultConfig();
+        if ($this->getConfig()->get("antiswearwords")){
+        $this->profanityfilter = new ProfanityFilter($this);
+        $this->getLogger()->info(TEXTFORMAT::GREEN . "AntiSpamPro Swear Filter Enabled");
+        }
     }
 
     public function onChat(PlayerChatEvent $e) {
@@ -57,15 +63,15 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
                     case "bancid":
 
                         if (method_exists($this->getServer(), "getCIDBans")) {
-                        $this->getServer()->getCIDBans()->addBan($sender->getClientId(), $this->getConfig()->get("banmessage"), null, $sender->getName());
-                        $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
-                        $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
-                        $sender->setBanned(true);
+                            $this->getServer()->getCIDBans()->addBan($sender->getClientId(), $this->getConfig()->get("banmessage"), null, $sender->getName());
+                            $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
+                            $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
+                            $sender->setBanned(true);
                         } else {
-                            
-                       $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
-                        $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
-                        $sender->setBanned(true);
+
+                            $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
+                            $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
+                            $sender->setBanned(true);
                         }
 
                     default:
@@ -79,6 +85,12 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
             $e->setCancelled();
         } else {
             $this->players[spl_object_hash($e->getPlayer())] = array("time" => time(), "warnings" => 0);
+            echo($this->getConfig()->get("antiswearwords") . "\n");
+            if ($this->getConfig()->get("antiswearwords") && $this->profanityfilter->hasProfanity($e->getMessage())) {
+                $e->getPlayer()->sendMessage(TEXTFORMAT::RED . "No Swear Words Allowed");
+                $e->setCancelled(true);
+                return true;
+            }
         }
     }
 
@@ -152,7 +164,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
                 return true;
 
             default:
-                
+
                 break;
         }
     }
@@ -163,4 +175,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
         }
     }
 
+    	public function getProfanityFilter(){
+		return $this->profanityfilter;
+	}
 }

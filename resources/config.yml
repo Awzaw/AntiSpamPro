@@ -21,3 +21,4 @@ help2: "/asp ban     set the punishment to ban"
 help3: "/asp set 2   set minimum delay (1,2 or 3)"
 help4: "/asp         display the current minimum delay"
 lastwarning: "CAREFUL... LAST WARNING"
+antiswearwords: true
