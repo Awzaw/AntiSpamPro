@@ -21,11 +21,16 @@ The delay setting in config.yml can be set freely, for now.
 To configure other plugins to use the AntiSpamPro profanity filter, use this is onEnable():
 
 `$this->antispampro = $this->getServer()->getPluginManager()->getPlugin("AntiSpamPro");`
+
 `if (!$this->antispampro) {`
+
 `$this->getLogger()->info("Unable to find AntiSpamPro");`
+
 `}`
 
+
 and then use this to check for swear words:
+
 
 `if ($this->chatcensor && $this->antispampro->getProfanityFilter()->hasProfanity($name)) {.......}`
 
