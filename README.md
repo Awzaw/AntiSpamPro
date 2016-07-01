@@ -34,3 +34,6 @@ and then use this to check for swear words:
 
 `if ($this->chatcensor && $this->antispampro->getProfanityFilter()->hasProfanity($name)) {.......}`
 
+
+
+KUDOS to https://github.com/mofodojodino/ProfanityFilter and https://github.com/fastwebmedia/Profanity-Filter
