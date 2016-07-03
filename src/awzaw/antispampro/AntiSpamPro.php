@@ -85,7 +85,6 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
             $e->setCancelled();
         } else {
             $this->players[spl_object_hash($e->getPlayer())] = array("time" => time(), "warnings" => 0);
-            echo($this->getConfig()->get("antiswearwords") . "\n");
             if ($this->getConfig()->get("antiswearwords") && $this->profanityfilter->hasProfanity($e->getMessage())) {
                 $e->getPlayer()->sendMessage(TEXTFORMAT::RED . "No Swear Words Allowed");
                 $e->setCancelled(true);
