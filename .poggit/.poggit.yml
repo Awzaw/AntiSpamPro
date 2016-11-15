@@ -1,7 +1,0 @@
----
-branches: master
-projects:
-  AntiSpamPro:
-    path: ""
-    model: default
-...
