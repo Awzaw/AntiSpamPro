@@ -1,7 +1,0 @@
---- # Poggit-CI Manifest. Open the CI at http://localhost/poggit/ci/Awzaw/AntiSpamPro
-branches:
-- master
-projects:
-  AntiSpamPro:
-    path: ""
-...
