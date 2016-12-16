@@ -3,7 +3,7 @@ api: [1.13.0, 1.14.0, 2.0.0]
 load: POSTWORLD
 name: AntiSpamPro
 description: "antispampro"
-version: 1.0.4
+version: 1.0.6
 author: awzaw
 commands:
  asp:

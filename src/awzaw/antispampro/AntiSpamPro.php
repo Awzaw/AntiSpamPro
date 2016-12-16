@@ -22,9 +22,9 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
     public function onEnable() {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->saveDefaultConfig();
-        if ($this->getConfig()->get("antiswearwords")){
-        $this->profanityfilter = new ProfanityFilter($this);
-        $this->getLogger()->info(TEXTFORMAT::GREEN . "AntiSpamPro Swear Filter Enabled");
+        if ($this->getConfig()->get("antiswearwords")) {
+            $this->profanityfilter = new ProfanityFilter($this);
+            $this->getLogger()->info(TEXTFORMAT::GREEN . "AntiSpamPro Swear Filter Enabled");
         }
     }
 
@@ -174,7 +174,8 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
         }
     }
 
-    	public function getProfanityFilter(){
-		return $this->profanityfilter;
-	}
+    public function getProfanityFilter() {
+        return $this->profanityfilter;
+    }
+
 }
