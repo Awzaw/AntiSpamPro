@@ -10,14 +10,14 @@ class ProfanityFilter extends PluginBase {
 
     const SEPARATOR_PLACEHOLDER = '{!!}';
 
-    /**
+    /*
      * Escaped separator characters
      */
     protected $escapedSeparatorCharacters = array(
         '\s',
     );
 
-    /**
+    /*
      * Unescaped separator characters.
      * @var array
      */
@@ -55,7 +55,7 @@ class ProfanityFilter extends PluginBase {
         '/',
     );
 
-    /**
+    /*
      * List of potential character substitutions as a regular expression.
      *
      * @var array
@@ -137,7 +137,7 @@ class ProfanityFilter extends PluginBase {
         '/z/' => array('z', 'Ζ', 'ž', 'Ž', 'ź', 'Ź', 'ż', 'Ż'),
     );
 
-    /**
+    /*
      * List of profanities to test against.
      *
      * @var array
@@ -161,7 +161,7 @@ class ProfanityFilter extends PluginBase {
         $this->characterExpressions = $this->generateCharacterExpressions();
     }
 
-    /**
+    /*
      * Checks string for profanities based on list 'profanities'
      *
      * @param $string
@@ -191,7 +191,7 @@ class ProfanityFilter extends PluginBase {
         return false;
     }
 
-    /**
+    /*
      * Obfuscates string that contains a 'profanity'.
      *
      * @param $string
@@ -206,7 +206,7 @@ class ProfanityFilter extends PluginBase {
         return $string;
     }
 
-    /**
+    /*
      * Generate a regular expression for a particular word
      *
      * @param $word
@@ -223,7 +223,7 @@ class ProfanityFilter extends PluginBase {
         return str_replace(self::SEPARATOR_PLACEHOLDER, $separatorExpression, $expression);
     }
 
-    /**
+    /*
      * Checks a string against a profanity.
      *
      * @param $string
@@ -235,7 +235,7 @@ class ProfanityFilter extends PluginBase {
         return preg_match($profanity, $string) === 1;
     }
 
-    /**
+    /*
      * Generates the separator regex to test characters in between letters.
      *
      * @param array  $characters
@@ -255,7 +255,7 @@ class ProfanityFilter extends PluginBase {
         return '[' . implode('', $regex) . ']' . $quantifier;
     }
 
-    /**
+    /*
      * Generates the separator regular expression.
      *
      * @return string
@@ -264,7 +264,7 @@ class ProfanityFilter extends PluginBase {
         return $this->generateEscapedExpression($this->separatorCharacters, $this->escapedSeparatorCharacters);
     }
 
-    /**
+    /*
      * Generates a list of regular expressions for each character substitution.
      *
      * @return array
@@ -280,7 +280,7 @@ class ProfanityFilter extends PluginBase {
         return $characterExpressions;
     }
 
-    /**
+    /*
      * Load 'profanities' from config file.
      *
      * @param $config
@@ -288,7 +288,7 @@ class ProfanityFilter extends PluginBase {
      * @return array
      */
     private function loadProfanitiesFromFile($config) {
-        /** @noinspection PhpIncludeInspection */
+        /* @noinspection PhpIncludeInspection */
         return include($config);
     }
 
@@ -508,7 +508,6 @@ class ProfanityFilter extends PluginBase {
             'clogwog',
             'clunge',
             'clusterfuck',
-            'cnts',
             'cntz',
             'cock',
             'cockass',
@@ -568,7 +567,6 @@ class ProfanityFilter extends PluginBase {
             'crotchjockey',
             'crotchmonkey',
             'crotchrot',
-            'cum',
             'cumbubble',
             'cumdumpster',
             'cumfest',
@@ -614,7 +612,6 @@ class ProfanityFilter extends PluginBase {
             'deepthroat',
             'defecate',
             'devilworshipper',
-            'dick',
             'dickbag',
             'dickbeaters',
             'dickbrain',
@@ -630,7 +627,6 @@ class ProfanityFilter extends PluginBase {
             'dicklicker',
             'dickmilk',
             'dickmonger',
-            'dicks',
             'dickslap',
             'dick-sneeze',
             'dicksucker',
@@ -640,7 +636,6 @@ class ProfanityFilter extends PluginBase {
             'dickweasel',
             'dickweed',
             'dickwod',
-            'dike',
             'dildo',
             'dildos',
             'dilldo',
@@ -676,7 +671,6 @@ class ProfanityFilter extends PluginBase {
             'dyke',
             'easyslut',
             'eatballs',
-            'eatme',
             'eatpussy',
             'ejaculate',
             'ejaculated',
@@ -710,7 +704,6 @@ class ProfanityFilter extends PluginBase {
             'fatass',
             'fatfuck',
             'fatfucker',
-            'fatso',
             'feces',
             'felatio ',
             'felch',
@@ -909,7 +902,6 @@ class ProfanityFilter extends PluginBase {
             'jackshit',
             'jagoff',
             'japcrap',
-            'japs',
             'jerkass',
             'jerk off',
             'jerk-off',
@@ -989,8 +981,6 @@ class ProfanityFilter extends PluginBase {
             'lovemuscle',
             'lovepistol',
             'loverocket',
-            'low life',
-            'lowlife',
             'lubejob',
             'lucifer',
             'luckycameltoe',
@@ -1051,7 +1041,6 @@ class ProfanityFilter extends PluginBase {
             'mother fukkah',
             'mother fukker',
             'motherlovebone',
-            'muff',
             'muffdive',
             'muffdiver',
             'muffindiver',
@@ -1100,8 +1089,6 @@ class ProfanityFilter extends PluginBase {
             'niggur',
             'niglet',
             'nignog',
-            'nigr',
-            'nigra',
             'nigre',
             'nigur',
             'niiger',
@@ -1132,7 +1119,6 @@ class ProfanityFilter extends PluginBase {
             'oriface',
             'orifice',
             'orifiss',
-            'packi',
             'packie',
             'packy',
             'paedo',
@@ -1164,7 +1150,6 @@ class ProfanityFilter extends PluginBase {
             'penispuffer',
             'penus',
             'penuus',
-            'perv',
             'perversion',
             'pervert',
             'phonesex',
@@ -1230,7 +1215,6 @@ class ProfanityFilter extends PluginBase {
             'pornography',
             'pornprincess',
             'premature',
-            'pric',
             'prick',
             'prik',
             'prickhead',
@@ -1238,7 +1222,6 @@ class ProfanityFilter extends PluginBase {
             'protestant',
             'pu55i',
             'pu55y',
-            'pube',
             'pubiclice',
             'punanny',
             'punta',
@@ -1259,8 +1242,6 @@ class ProfanityFilter extends PluginBase {
             'pusy',
             'puuke',
             'puuker',
-            'queef',
-            'queer',
             'queerbait',
             'queerhole',
             'queers',
@@ -1322,7 +1303,6 @@ class ProfanityFilter extends PluginBase {
             'shagger',
             'shaggin',
             'shagging',
-            'shat',
             'shhit',
             'shit',
             'shitass',
@@ -1413,8 +1393,6 @@ class ProfanityFilter extends PluginBase {
             'slutwhore',
             'slutz',
             'smackthemonkey',
-            'smeg',
-            'smut',
             'snatch',
             'snatchpatch',
             'snowback',
@@ -1445,10 +1423,8 @@ class ProfanityFilter extends PluginBase {
             'splittail',
             'splooge',
             'spooge',
-            'spook',
             'spreadeagle',
             'spunk',
-            'squaw',
             'stabber',
             'stiffy',
             'strapon',
@@ -1563,8 +1539,6 @@ class ProfanityFilter extends PluginBase {
             'wife beater',
             'williewanker',
             'wuzzie',
-            'x-rated',
-            'xrated',
             'yellowman',
             'zigabo',
             'zipperhea',
