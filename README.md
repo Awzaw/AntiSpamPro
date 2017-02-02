@@ -36,5 +36,7 @@ and then use this to check for swear words:
 
 
 
-KUDOS to https://github.com/mofodojodino/ProfanityFilter
-and https://github.com/fastwebmedia/Profanity-Filter
+KUDOS to
+https://github.com/mofodojodino/ProfanityFilter
+and
+https://github.com/fastwebmedia/Profanity-Filter
