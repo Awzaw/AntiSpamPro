@@ -11,24 +11,26 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
 use pocketmine\utils\TextFormat;
-use pocketmine\Server;
-use awzaw\antispampro\ProfanityFilter;
+use pocketmine\event\player\PlayerCommandPreprocessEvent;
 
 class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
     private $players = [];
     public $profanityfilter;
 
-    public function onEnable() {
+    public function onEnable()
+    {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->saveDefaultConfig();
         if ($this->getConfig()->get("antiswearwords")) {
+            $this->saveResource("swearwords.yml", false);
             $this->profanityfilter = new ProfanityFilter($this);
             $this->getLogger()->info(TEXTFORMAT::GREEN . "AntiSpamPro Swear Filter Enabled");
         }
     }
 
-    public function onChat(PlayerChatEvent $e) {
+    public function onChat(PlayerChatEvent $e)
+    {
 
         if (isset($this->players[spl_object_hash($e->getPlayer())]) && (time() - $this->players[spl_object_hash($e->getPlayer())]["time"] <= intval($this->getConfig()->get("delay")))) {
             $this->players[spl_object_hash($e->getPlayer())]["time"] = time();
@@ -88,13 +90,12 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
             if ($this->getConfig()->get("antiswearwords") && $this->profanityfilter->hasProfanity($e->getMessage())) {
                 $e->getPlayer()->sendMessage(TEXTFORMAT::RED . "No Swear Words Allowed");
                 $e->setCancelled(true);
-                return true;
             }
         }
     }
 
-    public function onCommand(CommandSender $sender, Command $cmd, $label, array $args) {
-
+    public function onCommand(CommandSender $sender, Command $cmd, $label, array $args)
+    {
         if (!isset($args[0])) {
             if ($sender instanceof Player) {
                 $sender->getPlayer()->sendMessage(TEXTFORMAT::GREEN . "Banmode: " . $this->getConfig()->get("action") . "  " . "Delay: " . $this->getConfig()->get("delay") . " seconds");
@@ -159,7 +160,6 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
                     }
                 }
 
-
                 return true;
 
             default:
@@ -168,14 +168,82 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
         }
     }
 
-    public function onQuit(PlayerQuitEvent $e) {
+    /**
+     * @param PlayerCommandPreprocessEvent $event
+     *
+     * @priority MONITOR
+     */
+    public function onPlayerCommand(PlayerCommandPreprocessEvent $event)
+    {
+        $message = $event->getMessage();
+        if ($message{0} != "/") {
+            return;
+        }
+        $sender = $event->getPlayer();
+        if (isset($this->players[spl_object_hash($sender)]) && (time() - $this->players[spl_object_hash($sender)]["time"] <= intval($this->getConfig()->get("delay")))) {
+            $this->players[spl_object_hash($sender)]["time"] = time();
+            $this->players[spl_object_hash($sender)]["warnings"] = $this->players[spl_object_hash($sender)]["warnings"] + 1;
+
+            if ($this->players[spl_object_hash($sender)]["warnings"] === $this->getConfig()->get("warnings")) {
+                $sender->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("lastwarning"));
+                $event->setCancelled();
+                return;
+            }
+            if ($this->players[spl_object_hash($sender)]["warnings"] > $this->getConfig()->get("warnings")) {
+                $event->setCancelled();
+
+                switch (strtolower($this->getConfig()->get("action"))) {
+                    case "kick":
+                        $sender->kick($this->getConfig()->get("kickmessage"));
+                        break;
+
+                    case "ban":
+                        $sender->setBanned(true);
+                        break;
+
+                    case "banip":
+
+                        $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
+                        $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
+                        $sender->setBanned(true);
+
+                        break;
+
+                    case "bancid":
+
+                        if (method_exists($this->getServer(), "getCIDBans")) {
+                            $this->getServer()->getCIDBans()->addBan($sender->getClientId(), $this->getConfig()->get("banmessage"), null, $sender->getName());
+                            $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
+                            $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
+                            $sender->setBanned(true);
+                        } else {
+                            $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
+                            $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
+                            $sender->setBanned(true);
+                        }
+
+                    default:
+                        break;
+                }
+                return;
+            }
+            $sender->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("message1"));
+            $sender->sendMessage(TEXTFORMAT::GREEN . $this->getConfig()->get("message2"));
+            $event->setCancelled();
+        } else {
+            $this->players[spl_object_hash($sender)] = array("time" => time(), "warnings" => 0);
+        }
+    }
+
+    public function onQuit(PlayerQuitEvent $e)
+    {
         if (isset($this->players[spl_object_hash($e->getPlayer())])) {
             unset($this->players[spl_object_hash($e->getPlayer())]);
         }
     }
 
-    public function getProfanityFilter() {
+    public function getProfanityFilter()
+    {
         return $this->profanityfilter;
     }
-
 }
