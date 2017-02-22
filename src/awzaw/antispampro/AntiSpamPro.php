@@ -105,8 +105,6 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
             return true;
         }
 
-        //if ($sender instanceof Player && !$sender->isOp()) return true;
-
         switch (strtolower($args[0])) {
 
             case "help":
@@ -163,9 +161,9 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
                 return true;
 
             default:
-
                 break;
         }
+        return false;
     }
 
     /**
