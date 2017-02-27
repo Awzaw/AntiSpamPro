@@ -29,9 +29,8 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
         }
     }
 
-    public function onChat(PlayerChatEvent $e)
-    {
-
+    public function onChat(PlayerChatEvent $e) {
+        if ($e->isCancelled()) return;
         if (isset($this->players[spl_object_hash($e->getPlayer())]) && (time() - $this->players[spl_object_hash($e->getPlayer())]["time"] <= intval($this->getConfig()->get("delay")))) {
             $this->players[spl_object_hash($e->getPlayer())]["time"] = time();
             $this->players[spl_object_hash($e->getPlayer())]["warnings"] = $this->players[spl_object_hash($e->getPlayer())]["warnings"] + 1;
@@ -166,13 +165,8 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
         return false;
     }
 
-    /**
-     * @param PlayerCommandPreprocessEvent $event
-     *
-     * @priority MONITOR
-     */
-    public function onPlayerCommand(PlayerCommandPreprocessEvent $event)
-    {
+    public function onPlayerCommand(PlayerCommandPreprocessEvent $event) {
+        if ($event->isCancelled()) return;
         $message = $event->getMessage();
         if ($message{0} != "/") {
             return;
@@ -235,6 +229,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
     public function onQuit(PlayerQuitEvent $e)
     {
+        if ($e->isCancelled()) return;
         if (isset($this->players[spl_object_hash($e->getPlayer())])) {
             unset($this->players[spl_object_hash($e->getPlayer())]);
         }
