@@ -229,7 +229,6 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
     public function onQuit(PlayerQuitEvent $e)
     {
-        if ($e->isCancelled()) return;
         if (isset($this->players[spl_object_hash($e->getPlayer())])) {
             unset($this->players[spl_object_hash($e->getPlayer())]);
         }
