@@ -165,6 +165,12 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
         return false;
     }
 
+    /**
+     * @param PlayerCommandPreprocessEvent $event
+     *
+     * @priority LOWEST
+     */
+
     public function onPlayerCommand(PlayerCommandPreprocessEvent $event) {
         if ($event->isCancelled()) return;
         $message = $event->getMessage();
@@ -178,11 +184,11 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
             if ($this->players[spl_object_hash($sender)]["warnings"] === $this->getConfig()->get("warnings")) {
                 $sender->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("lastwarning"));
-                $event->setCancelled();
+                $event->setCancelled(true);
                 return;
             }
             if ($this->players[spl_object_hash($sender)]["warnings"] > $this->getConfig()->get("warnings")) {
-                $event->setCancelled();
+                $event->setCancelled(true);
 
                 switch (strtolower($this->getConfig()->get("action"))) {
                     case "kick":
