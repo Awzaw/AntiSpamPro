@@ -30,7 +30,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
     }
 
     public function onChat(PlayerChatEvent $e) {
-        if ($e->isCancelled()) return;
+        if ($e->isCancelled() || $e->getPlayer()->hasPermission("asp.bypass")) return;
         if (isset($this->players[spl_object_hash($e->getPlayer())]) && (time() - $this->players[spl_object_hash($e->getPlayer())]["time"] <= intval($this->getConfig()->get("delay")))) {
             $this->players[spl_object_hash($e->getPlayer())]["time"] = time();
             $this->players[spl_object_hash($e->getPlayer())]["warnings"] = $this->players[spl_object_hash($e->getPlayer())]["warnings"] + 1;
@@ -173,11 +173,12 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
     public function onPlayerCommand(PlayerCommandPreprocessEvent $event) {
         if ($event->isCancelled()) return;
+        $sender = $event->getPlayer();
+        if ($sender->hasPermission("asp.bypass")) return;
         $message = $event->getMessage();
         if ($message{0} != "/") {
             return;
         }
-        $sender = $event->getPlayer();
         if (isset($this->players[spl_object_hash($sender)]) && (time() - $this->players[spl_object_hash($sender)]["time"] <= intval($this->getConfig()->get("delay")))) {
             $this->players[spl_object_hash($sender)]["time"] = time();
             $this->players[spl_object_hash($sender)]["warnings"] = $this->players[spl_object_hash($sender)]["warnings"] + 1;
