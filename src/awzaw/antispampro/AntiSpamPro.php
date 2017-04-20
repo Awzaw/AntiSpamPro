@@ -7,6 +7,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
@@ -22,7 +23,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
     {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->saveDefaultConfig();
-        if ($this->getConfig()->get("antiswearwords")) {
+        if ($this->getConfig()->get("antiswearwords") || $this->getConfig()->get("antirudenames")) {
             $this->saveResource("swearwords.yml", false);
             $this->profanityfilter = new ProfanityFilter($this);
             $this->getLogger()->info(TEXTFORMAT::GREEN . "AntiSpamPro Swear Filter Enabled");
@@ -238,6 +239,14 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
     {
         if (isset($this->players[spl_object_hash($e->getPlayer())])) {
             unset($this->players[spl_object_hash($e->getPlayer())]);
+        }
+    }
+
+    public function onLogin(PlayerLoginEvent $e)
+    {
+        if ($this->getConfig()->get("antirudenames") && $this->profanityfilter->hasProfanity($e->getPlayer()->getName())) {
+            $e->getPlayer()->kick("No Rude Names Allowed");
+            $e->setCancelled(true);
         }
     }
 
