@@ -1,7 +1,7 @@
 # AntiSpamPro
 
 Antispam plugin with configurable delay, profanity filter (block swear words), automatic actions (kick, ban) and commands to change settings on the fly in console or in game
-ASP 1.1 now also detects command spam.
+ASP also detects command spam.
 
 /asp - display the current AntiSpamPro settings
 
