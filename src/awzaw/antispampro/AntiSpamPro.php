@@ -94,8 +94,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
         }
     }
 
-    public function onCommand(CommandSender $sender, Command $cmd, $label, array $args)
-    {
+    public function onCommand(CommandSender $sender, Command $cmd, string $label, array $args) : bool{
         if (!isset($args[0])) {
             if ($sender instanceof Player) {
                 $sender->getPlayer()->sendMessage(TEXTFORMAT::GREEN . "Banmode: " . $this->getConfig()->get("action") . "  " . "Delay: " . $this->getConfig()->get("delay") . " seconds");
