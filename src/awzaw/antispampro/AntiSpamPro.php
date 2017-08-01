@@ -88,7 +88,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
         } else {
             $this->players[spl_object_hash($e->getPlayer())] = array("time" => time(), "warnings" => 0);
             if ($this->getConfig()->get("antiswearwords") && $this->profanityfilter->hasProfanity($e->getMessage())) {
-                $e->getPlayer()->sendMessage(TEXTFORMAT::RED . "No Swear Words Allowed");
+                $e->getPlayer()->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("swearmessage"));
                 $e->setCancelled(true);
             }
         }
