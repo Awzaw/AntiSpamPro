@@ -1,9 +1,9 @@
 main: awzaw\antispampro\AntiSpamPro
-api: [3.0.0-ALPHA7, 3.0.0-ALPHA8]
+api: [3.0.0-ALPHA7, 3.0.0-ALPHA8, 3.0.0-ALPHA9]
 load: POSTWORLD
 name: AntiSpamPro
 description: "AntiSpamPro"
-version: 1.4.0-1.alpha8
+version: 1.4.0-2
 author: awzaw
 commands:
  asp:
