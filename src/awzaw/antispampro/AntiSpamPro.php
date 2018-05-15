@@ -62,20 +62,6 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
                         break;
 
-                    case "bancid":
-
-                        if (method_exists($this->getServer(), "getCIDBans")) {
-                            $this->getServer()->getCIDBans()->addBan($sender->getClientId(), $this->getConfig()->get("banmessage"), null, $sender->getName());
-                            $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
-                            $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
-                            $sender->setBanned(true);
-                        } else {
-
-                            $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
-                            $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
-                            $sender->setBanned(true);
-                        }
-
                     default:
                         break;
                 }
@@ -125,7 +111,6 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
             case "banip":
             case "ban":
             case "kick":
-            case "bancid":
                 $this->getConfig()->set("action", strtolower($args[0]));
                 $this->getConfig()->save();
 
@@ -207,19 +192,6 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
                         $sender->setBanned(true);
 
                         break;
-
-                    case "bancid":
-
-                        if (method_exists($this->getServer(), "getCIDBans")) {
-                            $this->getServer()->getCIDBans()->addBan($sender->getClientId(), $this->getConfig()->get("banmessage"), null, $sender->getName());
-                            $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
-                            $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
-                            $sender->setBanned(true);
-                        } else {
-                            $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
-                            $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
-                            $sender->setBanned(true);
-                        }
 
                     default:
                         break;
