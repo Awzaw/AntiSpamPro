@@ -31,34 +31,33 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
     }
 
     public function onChat(PlayerChatEvent $e) {
-        if ($e->isCancelled() || $e->getPlayer()->hasPermission("asp.bypass")) return;
-        if (isset($this->players[spl_object_hash($e->getPlayer())]) && (time() - $this->players[spl_object_hash($e->getPlayer())]["time"] <= intval($this->getConfig()->get("delay")))) {
-            $this->players[spl_object_hash($e->getPlayer())]["time"] = time();
-            $this->players[spl_object_hash($e->getPlayer())]["warnings"] = $this->players[spl_object_hash($e->getPlayer())]["warnings"] + 1;
+        if ($e->isCancelled() || ($player = $e->getPlayer())->isClosed() || $player->hasPermission("asp.bypass")) return;
+        if (isset($this->players[spl_object_hash($player)]) && (time() - $this->players[spl_object_hash($player)]["time"] <= intval($this->getConfig()->get("delay")))) {
+            $this->players[spl_object_hash($player)]["time"] = time();
+            $this->players[spl_object_hash($player)]["warnings"] = $this->players[spl_object_hash($player)]["warnings"] + 1;
 
-            if ($this->players[spl_object_hash($e->getPlayer())]["warnings"] === $this->getConfig()->get("warnings")) {
-                $e->getPlayer()->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("lastwarning"));
+            if ($this->players[spl_object_hash($player)]["warnings"] === $this->getConfig()->get("warnings")) {
+				$player->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("lastwarning"));
                 $e->setCancelled();
                 return;
             }
-            if ($this->players[spl_object_hash($e->getPlayer())]["warnings"] > $this->getConfig()->get("warnings")) {
+            if ($this->players[spl_object_hash($player)]["warnings"] > $this->getConfig()->get("warnings")) {
                 $e->setCancelled();
 
-                $sender = $e->getPlayer();
                 switch (strtolower($this->getConfig()->get("action"))) {
                     case "kick":
-                        $sender->kick($this->getConfig()->get("kickmessage"));
+						$player->kick($this->getConfig()->get("kickmessage"));
                         break;
 
                     case "ban":
-                        $sender->setBanned(true);
+						$player->setBanned(true);
                         break;
 
                     case "banip":
 
-                        $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
-                        $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
-                        $sender->setBanned(true);
+                        $this->getServer()->getIPBans()->addBan($player->getAddress(), $this->getConfig()->get("banmessage"), null, $player->getName());
+                        $this->getServer()->getNetwork()->blockAddress($player->getAddress(), -1);
+						$player->setBanned(true);
 
                         break;
 
@@ -68,13 +67,13 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
                 return;
             }
-            $e->getPlayer()->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("message1"));
-            $e->getPlayer()->sendMessage(TEXTFORMAT::GREEN . $this->getConfig()->get("message2"));
+			$player->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("message1"));
+			$player->sendMessage(TEXTFORMAT::GREEN . $this->getConfig()->get("message2"));
             $e->setCancelled();
         } else {
-            $this->players[spl_object_hash($e->getPlayer())] = array("time" => time(), "warnings" => 0);
+            $this->players[spl_object_hash($player)] = array("time" => time(), "warnings" => 0);
             if ($this->getConfig()->get("antiswearwords") && $this->profanityfilter->hasProfanity($e->getMessage())) {
-                $e->getPlayer()->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("swearmessage"));
+				$player->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("swearmessage"));
                 $e->setCancelled(true);
             }
         }
@@ -157,9 +156,8 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
      */
 
     public function onPlayerCommand(PlayerCommandPreprocessEvent $event) {
-        if ($event->isCancelled()) return;
-        $sender = $event->getPlayer();
-        if ($sender->hasPermission("asp.bypass")) return;
+        if ($event->isCancelled() || $event->getPlayer()->isClosed()) return;
+        if (($sender = $event->getPlayer())->hasPermission("asp.bypass")) return;
         $message = $event->getMessage();
         if ($message{0} != "/") {
             return;
@@ -215,6 +213,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
     public function onLogin(PlayerLoginEvent $e)
     {
+		if ($e->isCancelled() || $e->getPlayer()->isClosed()) return;
         if ($this->getConfig()->get("antirudenames") && $this->profanityfilter->hasProfanity($e->getPlayer()->getName())) {
             $e->getPlayer()->kick("No Rude Names Allowed");
             $e->setCancelled(true);
