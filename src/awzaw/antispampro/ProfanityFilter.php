@@ -5,7 +5,7 @@ namespace awzaw\antispampro;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 
-class ProfanityFilter extends PluginBase {
+class ProfanityFilter {
 
     public $plugin;
 
