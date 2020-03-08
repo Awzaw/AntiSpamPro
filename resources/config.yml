@@ -4,16 +4,16 @@
 #kickmessage is displayed when kicked
 #warnings is the number offenses before action is taken
 delay: 2
-message1: "Please be polite, do not chat too fast"
+message1: "Vă rugăm să fiți politicos, și să nu mai spamati"
 message2: "For help and chat join DISCORD at jdcraft.net/discord"
 action: "kick"
-kickmessage: "Server Closed"
+kickmessage: "Ai primit kick"
 warnings: 5
 setkickmessage: "Spammers will be kicked"
 setbanmessage: "Spammers will be banned"
 setbanipmessage: "Spammers will be IP banned"
 setbancidmessage: "Spammers will be CID banned"
-banmessage: "No Spam"
+banmessage: "Nu spama"
 setdelay: "AntiSpamPro settings have been changed"
 invaliddelay: "Please use a valid delay (1, 2 or 3)"
 help1: "/asp kick    set the punishment to kick"
