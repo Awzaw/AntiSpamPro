@@ -2,7 +2,7 @@
 
 namespace awzaw\antispampro;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\Listener;
@@ -11,6 +11,7 @@ use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use pocketmine\command\CommandExecutor;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
 
@@ -19,7 +20,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
     private $players = [];
     public $profanityfilter;
 
-    public function onEnable()
+    public function onEnable(): void
     {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->saveDefaultConfig();
@@ -38,11 +39,11 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
             if ($this->players[spl_object_hash($player)]["warnings"] === $this->getConfig()->get("warnings")) {
 				$player->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("lastwarning"));
-                $e->setCancelled();
+                $e->cancel();
                 return;
             }
             if ($this->players[spl_object_hash($player)]["warnings"] > $this->getConfig()->get("warnings")) {
-                $e->setCancelled();
+                $e->cancel();
 
                 switch (strtolower($this->getConfig()->get("action"))) {
                     case "kick":
@@ -50,15 +51,16 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
                         break;
 
                     case "ban":
-						$player->setBanned(true);
+						Server::getInstance()->getNameBans()->addBan($player, $this->getConfig()->get("banmessage"));
+                        $player->kick($this->getConfig()->get("banmessage"));
                         break;
 
                     case "banip":
 
-                        $this->getServer()->getIPBans()->addBan($player->getAddress(), $this->getConfig()->get("banmessage"), null, $player->getName());
-                        $this->getServer()->getNetwork()->blockAddress($player->getAddress(), -1);
-						$player->setBanned(true);
-
+                        $this->getServer()->getIPBans()->addBan($player->getNetworkSession()->getIp(), $this->getConfig()->get("banmessage"), null, $player->getName());
+                        $this->getServer()->getNetwork()->blockAddress($player->getNetworkSession()->getIp(), -1);
+                        Server::getInstance()->getNameBans()->addBan($player, $this->getConfig()->get("banmessage"));
+                        $player->kick($this->getConfig()->get("banmessage"));
                         break;
 
                     default:
@@ -69,12 +71,12 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
             }
 			$player->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("message1"));
 			$player->sendMessage(TEXTFORMAT::GREEN . $this->getConfig()->get("message2"));
-            $e->setCancelled();
+            $e->cancel();
         } else {
             $this->players[spl_object_hash($player)] = array("time" => time(), "warnings" => 0);
             if ($this->getConfig()->get("antiswearwords") && $this->profanityfilter->hasProfanity($e->getMessage())) {
 				$player->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("swearmessage"));
-                $e->setCancelled(true);
+                $e->cancel();
             }
         }
     }
@@ -82,7 +84,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
     public function onCommand(CommandSender $sender, Command $cmd, string $label, array $args) : bool{
         if (!isset($args[0])) {
             if ($sender instanceof Player) {
-                $sender->getPlayer()->sendMessage(TEXTFORMAT::GREEN . "Banmode: " . $this->getConfig()->get("action") . "  " . "Delay: " . $this->getConfig()->get("delay") . " seconds");
+                $sender->sendMessage(TEXTFORMAT::GREEN . "Banmode: " . $this->getConfig()->get("action") . "  " . "Delay: " . $this->getConfig()->get("delay") . " seconds");
             } else {
                 $this->getLogger()->info("Banmode: " . $this->getConfig()->get("action") . "  " . "Delay: " . $this->getConfig()->get("delay") . " seconds");
             }
@@ -94,10 +96,10 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
             case "help":
 
                 if ($sender instanceof Player) {
-                    $sender->getPlayer()->sendMessage(TEXTFORMAT::YELLOW . $this->getConfig()->get("help1"));
-                    $sender->getPlayer()->sendMessage(TEXTFORMAT::YELLOW . $this->getConfig()->get("help2"));
-                    $sender->getPlayer()->sendMessage(TEXTFORMAT::YELLOW . $this->getConfig()->get("help3"));
-                    $sender->getPlayer()->sendMessage(TEXTFORMAT::YELLOW . $this->getConfig()->get("help4"));
+                    $sender->sendMessage(TEXTFORMAT::YELLOW . $this->getConfig()->get("help1"));
+                    $sender->sendMessage(TEXTFORMAT::YELLOW . $this->getConfig()->get("help2"));
+                    $sender->sendMessage(TEXTFORMAT::YELLOW . $this->getConfig()->get("help3"));
+                    $sender->sendMessage(TEXTFORMAT::YELLOW . $this->getConfig()->get("help4"));
                 } else {
                     $this->getLogger()->info($this->getConfig()->get("help1"));
                     $this->getLogger()->info($this->getConfig()->get("help2"));
@@ -114,7 +116,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
                 $this->getConfig()->save();
 
                 if ($sender instanceof Player) {
-                    $sender->getPlayer()->sendMessage(TEXTFORMAT::GREEN . $this->getConfig()->get("set" . strtolower($args[0]) . "kickmessage"));
+                    $sender->sendMessage(TEXTFORMAT::GREEN . $this->getConfig()->get("set" . strtolower($args[0]) . "kickmessage"));
                 } else {
                     $this->getLogger()->info($this->getConfig()->get("set" . strtolower($args[0]) . "message"));
                 }
@@ -128,14 +130,14 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
                     $this->getConfig()->save();
 
                     if ($sender instanceof Player) {
-                        $sender->getPlayer()->sendMessage(TEXTFORMAT::GREEN . $this->getConfig()->get("setdelay"));
+                        $sender->sendMessage(TEXTFORMAT::GREEN . $this->getConfig()->get("setdelay"));
                     } else {
                         $this->getLogger()->info($this->getConfig()->get("setdelay"));
                     }
                 } else {
 
                     if ($sender instanceof Player) {
-                        $sender->getPlayer()->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("invaliddelay"));
+                        $sender->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("invaliddelay"));
                     } else {
                         $this->getLogger()->info($this->getConfig()->get("invaliddelay"));
                     }
@@ -159,7 +161,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
         if ($event->isCancelled() || $event->getPlayer()->isClosed()) return;
         if (($sender = $event->getPlayer())->hasPermission("asp.bypass")) return;
         $message = $event->getMessage();
-        if ($message{0} != "/") {
+        if ($message[0] != "/") {
             return;
         }
         if (isset($this->players[spl_object_hash($sender)]) && (time() - $this->players[spl_object_hash($sender)]["time"] <= intval($this->getConfig()->get("delay")))) {
@@ -168,11 +170,11 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 
             if ($this->players[spl_object_hash($sender)]["warnings"] === $this->getConfig()->get("warnings")) {
                 $sender->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("lastwarning"));
-                $event->setCancelled(true);
+                $event->cancel();
                 return;
             }
             if ($this->players[spl_object_hash($sender)]["warnings"] > $this->getConfig()->get("warnings")) {
-                $event->setCancelled(true);
+                $event->cancel();
 
                 switch (strtolower($this->getConfig()->get("action"))) {
                     case "kick":
@@ -180,15 +182,16 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
                         break;
 
                     case "ban":
-                        $sender->setBanned(true);
+                        Server::getInstance()->getNameBans()->addBan($sender, $this->getConfig()->get("banmessage"));
+                        $sender->kick($this->getConfig()->get("banmessage"));
                         break;
 
                     case "banip":
 
-                        $this->getServer()->getIPBans()->addBan($sender->getAddress(), $this->getConfig()->get("banmessage"), null, $sender->getName());
-                        $this->getServer()->getNetwork()->blockAddress($sender->getAddress(), -1);
-                        $sender->setBanned(true);
-
+                        $this->getServer()->getIPBans()->addBan($sender->getNetworkSession()->getIp(), $this->getConfig()->get("banmessage"), null, $sender->getName());
+                        $this->getServer()->getNetwork()->blockAddress($sender->getNetworkSession()->getIp(), -1);
+                        Server::getInstance()->getNameBans()->addBan($sender, $this->getConfig()->get("banmessage"));
+                        $sender->kick($this->getConfig()->get("banmessage"));
                         break;
 
                     default:
@@ -198,7 +201,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
             }
             $sender->sendMessage(TEXTFORMAT::RED . $this->getConfig()->get("message1"));
             $sender->sendMessage(TEXTFORMAT::GREEN . $this->getConfig()->get("message2"));
-            $event->setCancelled();
+            $event->cancel();
         } else {
             $this->players[spl_object_hash($sender)] = array("time" => time(), "warnings" => 0);
         }
@@ -216,7 +219,7 @@ class AntiSpamPro extends PluginBase implements CommandExecutor, Listener {
 		if ($e->isCancelled() || $e->getPlayer()->isClosed()) return;
         if ($this->getConfig()->get("antirudenames") && $this->profanityfilter->hasProfanity($e->getPlayer()->getName())) {
             $e->getPlayer()->kick("No Rude Names Allowed");
-            $e->setCancelled(true);
+            $e->cancel();
         }
     }
 
